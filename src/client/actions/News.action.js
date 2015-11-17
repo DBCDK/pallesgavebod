@@ -15,7 +15,7 @@ const NewsActions = Reflux.createActions([
   'updateNewsList'
 ]);
 
-NewsActions.getNewsList.listen(getNewsList.request);
-saveEvent.response(NewsActions.updateNewsList);
+NewsActions.fetchNewsList.listen(getNewsList.request);
+getNewsList.response(NewsActions.updateNewsList);
 
 export default NewsActions;
