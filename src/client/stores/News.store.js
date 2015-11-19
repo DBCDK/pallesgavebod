@@ -21,7 +21,6 @@ let newsStore = Reflux.createStore({
 
   init() {
     this.listenToMany(NewsActions);
-    NewsActions.fetchNewsList({amount: 3});
   },
 
   getInitialState() {
@@ -29,11 +28,18 @@ let newsStore = Reflux.createStore({
   },
 
   onfetchNewsList() {
+    this.store.news.loading = true;
+    this.trigger(this.store);
 
   },
-  onupdateNewsList() {
-
-  },
+  onUpdateNewsList(response) {
+    this.store.news = {
+      items: response,
+      haveBeenFetched: true,
+      loading: false,
+    };
+    this.trigger(this.store);
+  }
 });
 
 export default newsStore;

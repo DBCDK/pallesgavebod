@@ -1,20 +1,49 @@
 'use strict';
 
+import {slice} from 'lodash'
 import React from 'react';
 import NewsItem from './NewsItem.component.js';
+import NewsActions from '../../actions/News.action.js'
+import NewsStore from '../../stores/News.store.js'
 
 export default class NewsFrontPageContainerComponent extends React.Component {
+  constructor() {
+    super();
+    NewsStore.listen(this.setState.bind(this));
+    this.state = NewsStore.getInitialState();
+    this.state.showNumberOfPosts = this.props.showNumberOfPosts;
+    NewsActions.fetchNewsList({amount: this.props.loadNumberOfPosts});
+  }
+
+  /**
+   * maps news objects to a news compoment
+   * @param news
+   * @returns {*}
+   */
+  mapNews(news) {
+    return news.map((element, i) => {
+      const zebra = (i % 2 === 0) && 'even' || 'odd';
+      const link = `/news/${element.id}`;
+      return (
+        <NewsItem key={element.id} {...element} link={link} zebra={zebra} />
+      );
+    })
+  }
+
+  /**
+   * Show all loaded news
+   * @todo when the ddbContent service supports pagination, this should call an action to load more news
+   * @param event
+   */
+  showAllNews(event) {
+    event.preventDefault();
+    const showNumberOfPosts = this.state.news.items.length;
+    this.setState({showNumberOfPosts});
+  }
+
   render() {
-    const data = [{
-      title: 'dette er en title',
-      body: 'dette er en body',
-      id: 1
-    }, {
-      title: 'dette er en title 2',
-      body: 'dette er en body 2',
-      id: 2
-    }
-    ];
+    const newsDefault = slice(this.state.news.items, 0, this.state.showNumberOfPosts);
+    const newsMore = slice(this.state.news.items, this.state.showNumberOfPosts);
 
     return (
       <div className='news' >
@@ -22,34 +51,17 @@ export default class NewsFrontPageContainerComponent extends React.Component {
           <div className='news-items-headline' >
             <span>Nyt fra biblioteket</span>
           </div>
-          {
-            data.map((element, i) => {
-              const zebra = (i % 2 === 0) && 'even' || 'odd';
-              const link = `/news/${element.id}`;
-              return (
-                <NewsItem key={element.id} {...element} link={link} zebra={zebra} />
-              );
-            })
+          <div className="news-default" >
+            {this.mapNews(newsDefault)}
+          </div>
+          <div className={`news-more hide`} >
+            {this.mapNews(newsMore)}
+          </div>
+        </div>
+        <div className='news-items-link-container' >
+          { newsMore.length &&
+          (<a className='link' href='#' onClick={this.showAllNews.bind(this)} >Se flere nyheder...</a>) || null
           }
-        </div>
-        <div className='news-items-link-container' >
-          <a className='link' href='#' >Se alle nyheder...</a>
-        </div>
-
-
-        <div className='news-items' >
-          <div className='news-items-headline' >
-            <span>Det sker</span>
-          </div>
-          <div className='news-item odd' >
-            <span className='headline' >Strikkecafé</span>
-            <span className='body' >Er du mellem 6 og 12 år, så kom til en hyggelig og sjov strikkeworkshop, lørdag 24. oktober kl. 10.00-13.00 på Tranbjerg Bibliotek.</span>
-            <a className='link' href='#' >Læs mere</a>
-          </div>
-        </div>
-
-        <div className='news-items-link-container' >
-          <a className='link' href='#' >Se alle events...</a>
         </div>
       </div>
     );

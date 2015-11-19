@@ -8,8 +8,13 @@ export default class NewsItem extends React.Component {
   render() {
     return (
       <div className={['news-item'].concat(this.props.zebra).join(' ')} >
-        <span className="title" >{this.props.title}</span>
-        <span className="body" >{this.props.body}</span>
+        <div className="title" >{this.props.title}</div>
+        <div className="lead" >
+          {this.props.image &&
+          <img alt={this.props.title} className='image' src={`data:image/png;base64,${this.props.image}`} />
+          }
+          {this.props.lead}
+        </div>
         <a className="link" href={`#${this.props.link}`} >Læs mere</a>
       </div>
     );

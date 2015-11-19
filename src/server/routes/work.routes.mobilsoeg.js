@@ -13,7 +13,7 @@ const WorkRoutes = express.Router();
 
 import dbcMiddleware from './middleware.js';
 
-import workServer from '../../client/components/Work/Work.server.js';
+import workServer from '../../client/components/Work/Work.server.mobilsoeg';
 import {CoverImage, Order, Receipt} from 'dbc-react-components';
 
 WorkRoutes.get(
@@ -67,22 +67,26 @@ WorkRoutes.get(['/', '/*'], (req, res) => {
     }
   );
 
+  let borrowerId = req.session.passport && req.session.passport.user ? req.session.passport.user.loanerid : '';
+
   dbcMiddleware.setupSSR(req, res, promiseResponse, (err, result, serviceTime) => {
     if (err) {
       return dbcMiddleware.renderPage(res, 'work', {
         id,
+        borrowerId: borrowerId,
         workString: workServer({id}).work
       }, 'was too slow');
     }
 
-    let workStr = workServer({
+    const workStr = workServer({
       id: id,
-      work: result[0]
+      work: result[0].work
     }).work;
 
     res.set('Cache-Control', 'max-age=86400, s-maxage=86400, public');
     dbcMiddleware.renderPage(res, 'work', {
       id,
+      borrowerId: borrowerId,
       workString: workStr
     }, serviceTime);
   });
