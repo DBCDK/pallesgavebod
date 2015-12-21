@@ -49,7 +49,7 @@
     "css-loader": "0.22.0",
     "dbc-node-logger": "^1.4.6",
     "dbc-node-newrelic-wrapper": "^1.0.1",
-    "dbc-node-serviceprovider": "1.01",
+    "dbc-node-serviceprovider": "1.0.1",
     "dbc-node-serviceprovider-socketclient": "^1.0.3",
     "dbc-react-components": "git://github.com/DBCDK/dbc-react-components#stable_dist",
     "express": "4.13.3",
